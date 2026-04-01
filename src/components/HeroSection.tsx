@@ -14,6 +14,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative overflow-hidden border-b border-zinc-200 bg-gradient-to-b from-red-50 to-white dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950">
+      <div id="hero-sentinel" className="absolute top-0 h-1 w-full" />
       <div className="mx-auto flex max-w-6xl flex-col items-center px-4 py-16 text-center sm:px-6 sm:py-24">
         <Image
           src="/davar.svg"

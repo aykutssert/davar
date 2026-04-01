@@ -77,11 +77,17 @@ export async function createReport(formData: FormData): Promise<ActionResult> {
     return { success: false, error: "Geçersiz koordinat." };
   }
 
-  // Benzersiz dosya adı
-  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+  // Benzersiz dosya adı — MIME type'tan uzantı çıkar (compression sonrası dosya adı güvenilmez)
+  const MIME_TO_EXT: Record<string, string> = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+    "image/heic": "heic",
+  };
+  const ext = MIME_TO_EXT[file.type] || (file.name.split(".").pop() || "").toLowerCase();
 
-  if (!ALLOWED_EXTS.includes(ext)) {
-    return { success: false, error: "Geçersiz dosya uzantısı." };
+  if (!ext || !ALLOWED_EXTS.includes(ext)) {
+    return { success: false, error: "Geçersiz dosya formatı." };
   }
   const baseName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const fileName = `${baseName}.${ext}`;
