@@ -144,7 +144,10 @@ export async function createReport(formData: FormData): Promise<ActionResult> {
   }
 
   // Toplam sayacı artır (fotoğraf silinse bile istatistik kalır)
-  await supabase.rpc("increment_total_reports");
+  const { error: statsError } = await supabase.rpc("increment_total_reports");
+  if (statsError) {
+    console.error("Stats increment error:", statsError);
+  }
 
   revalidatePath("/");
   return { success: true };

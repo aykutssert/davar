@@ -145,10 +145,10 @@ export default function PrivacyPage() {
             <p>
               Tüm bildirimler 7 gün sonra otomatik olarak silinir. Acil kaldırma talebi için{" "}
               <a
-                href="mailto:destek@davar.app"
+                href="mailto:aykutssert@gmail.com"
                 className="font-medium text-red-600 underline underline-offset-2 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                destek@davar.app
+                aykutssert@gmail.com
               </a>{" "}
               adresine e-posta gönderebilirsiniz.
             </p>
@@ -161,10 +161,10 @@ export default function PrivacyPage() {
             <p>
               Gizlilik politikası ve kullanım koşullarıyla ilgili sorularınız için{" "}
               <a
-                href="mailto:destek@davar.app"
+                href="mailto:aykutssert@gmail.com"
                 className="font-medium text-red-600 underline underline-offset-2 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                destek@davar.app
+                aykutssert@gmail.com
               </a>{" "}
               adresiyle iletişime geçebilirsiniz.
             </p>
