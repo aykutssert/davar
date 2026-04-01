@@ -26,7 +26,7 @@ export default function HeroSection() {
           priority
         />
         <h2 className="max-w-2xl text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
-          Davarca hareket et.
+          Davarca İşler
           <br />
           <span className="text-red-600">Çek, paylaş, fark yarat.</span>
         </h2>
@@ -42,7 +42,7 @@ export default function HeroSection() {
               <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
               <circle cx="12" cy="13" r="3" />
             </svg>
-            Davarca Hareket Et
+            Davarsavar
           </button>
           <button
             onClick={handleScrollToFeed}
