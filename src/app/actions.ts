@@ -1,13 +1,13 @@
 "use server";
 
 import { supabase } from "@/lib/supabase";
+import { CITY_NAMES, getDistricts } from "@/lib/turkey-cities";
 import { revalidatePath } from "next/cache";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic"];
 const ALLOWED_EXTS = ["jpg", "jpeg", "png", "webp", "heic"];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_COMMENT_LENGTH = 280;
-const MAX_ADDRESS_LENGTH = 200;
 const VALID_CATEGORIES = [
   "engelli_yolu",
   "kaldirim",
@@ -34,11 +34,10 @@ export async function createReport(formData: FormData): Promise<ActionResult> {
   const file = formData.get("image") as File | null;
   const comment = (formData.get("comment") as string)?.trim() || "";
   const category = (formData.get("category") as string) || "";
-  const latStr = formData.get("latitude") as string;
-  const lngStr = formData.get("longitude") as string;
-  const address = ((formData.get("address") as string) || "").trim();
+  const city = (formData.get("city") as string)?.trim() || "";
+  const district = (formData.get("district") as string)?.trim() || "";
 
-  // Validasyon
+  // Validasyon — resim, kategori, il, ilçe zorunlu
   if (!file || file.size === 0) {
     return { success: false, error: "Lütfen bir fotoğraf seçin." };
   }
@@ -54,27 +53,21 @@ export async function createReport(formData: FormData): Promise<ActionResult> {
     return { success: false, error: "Dosya boyutu en fazla 10MB olabilir." };
   }
 
+  if (!category || !VALID_CATEGORIES.includes(category)) {
+    return { success: false, error: "Lütfen bir ihlal türü seçin." };
+  }
+
+  if (!city || !CITY_NAMES.includes(city)) {
+    return { success: false, error: "Lütfen bir il seçin." };
+  }
+
+  const validDistricts = getDistricts(city);
+  if (!district || !validDistricts.includes(district)) {
+    return { success: false, error: "Lütfen bir ilçe seçin." };
+  }
+
   if (comment.length > MAX_COMMENT_LENGTH) {
     return { success: false, error: `Yorum en fazla ${MAX_COMMENT_LENGTH} karakter olabilir.` };
-  }
-
-  if (category && !VALID_CATEGORIES.includes(category)) {
-    return { success: false, error: "Geçersiz kategori." };
-  }
-
-  if (address.length > MAX_ADDRESS_LENGTH) {
-    return { success: false, error: "Adres çok uzun." };
-  }
-
-  // Koordinat parse + doğrulama
-  const latitude = latStr ? parseFloat(latStr) : null;
-  const longitude = lngStr ? parseFloat(lngStr) : null;
-
-  if (latitude !== null && (isNaN(latitude) || latitude < -90 || latitude > 90)) {
-    return { success: false, error: "Geçersiz koordinat." };
-  }
-  if (longitude !== null && (isNaN(longitude) || longitude < -180 || longitude > 180)) {
-    return { success: false, error: "Geçersiz koordinat." };
   }
 
   // Benzersiz dosya adı — MIME type'tan uzantı çıkar (compression sonrası dosya adı güvenilmez)
@@ -116,10 +109,9 @@ export async function createReport(formData: FormData): Promise<ActionResult> {
   const { error: dbError } = await supabase.from("reports").insert({
     image_url: publicUrl,
     comment: comment ? sanitize(comment) : null,
-    category: category || null,
-    latitude,
-    longitude,
-    address: address ? sanitize(address) : null,
+    category: category,
+    city: sanitize(city),
+    district: sanitize(district),
     status: "pending",
   });
 

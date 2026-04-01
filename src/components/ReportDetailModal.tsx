@@ -9,9 +9,8 @@ interface Report {
   image_url: string;
   comment: string | null;
   category: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  address: string | null;
+  city: string | null;
+  district: string | null;
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -100,35 +99,14 @@ export default function ReportDetailModal({ report, onClose }: Props) {
           )}
 
           {/* Location */}
-          {(report.address || (report.latitude && report.longitude)) && (
-            <div className="mb-4 flex items-start gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
+          {report.city && (
+            <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                 <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                 <circle cx="12" cy="10" r="3" />
               </svg>
-              <span>{report.address || `${report.latitude!.toFixed(4)}, ${report.longitude!.toFixed(4)}`}</span>
+              <span>{report.district ? `${report.district}, ${report.city}` : report.city}</span>
             </div>
-          )}
-
-          {/* Map link */}
-          {report.latitude && report.longitude && (
-            <a
-              href={`https://www.google.com/maps?q=${report.latitude},${report.longitude}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg bg-zinc-100 px-4 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-              Haritada Gör
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                <polyline points="15 3 21 3 21 9" />
-                <line x1="10" y1="14" x2="21" y2="3" />
-              </svg>
-            </a>
           )}
         </div>
       </div>

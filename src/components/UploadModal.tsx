@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import imageCompression from "browser-image-compression";
 import { createReport, type ActionResult } from "@/app/actions";
+import { CITY_NAMES, getDistricts } from "@/lib/turkey-cities";
 
 const CATEGORIES = [
   { value: "", label: "Kategori seç..." },
@@ -23,63 +24,23 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [comment, setComment] = useState("");
   const [category, setCategory] = useState("");
+  const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const [loading, setLoading] = useState(false);
   const [compressing, setCompressing] = useState(false);
   const [result, setResult] = useState<ActionResult | null>(null);
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [address, setAddress] = useState<string>("");
-  const [locationStatus, setLocationStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // GPS konum al + reverse geocode
-  useEffect(() => {
-    if (!isOpen) return;
-    setLocationStatus("loading");
-    if (!navigator.geolocation) {
-      setLocationStatus("error");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        setLocation({ lat, lng });
-        setLocationStatus("success");
-
-        // Reverse geocode via Nominatim (free, no API key)
-        try {
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=tr&zoom=16`,
-            { headers: { "User-Agent": "Davar/1.0" } }
-          );
-          if (res.ok) {
-            const data = await res.json();
-            const a = data.address;
-            const parts = [
-              a?.road || a?.pedestrian || a?.neighbourhood,
-              a?.suburb || a?.borough,
-              a?.city || a?.town || a?.village || a?.county,
-            ].filter(Boolean);
-            if (parts.length > 0) setAddress(parts.join(", "));
-          }
-        } catch {
-          // Geocode başarısız olsa da konum koordinatları yeterli
-        }
-      },
-      () => {
-        setLocationStatus("error");
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  }, [isOpen]);
+  const districts = city ? getDistricts(city) : [];
 
   const resetForm = useCallback(() => {
     setPreview(null);
     setFile(null);
     setComment("");
     setCategory("");
-    setAddress("");
+    setCity("");
+    setDistrict("");
     setResult(null);
     setDragOver(false);
     setLoading(false);
@@ -128,7 +89,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) return;
+    if (!file || !category || !city || !district) return;
 
     setLoading(true);
     setResult(null);
@@ -137,13 +98,8 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
     formData.append("image", file);
     formData.append("comment", comment);
     formData.append("category", category);
-    if (location) {
-      formData.append("latitude", location.lat.toString());
-      formData.append("longitude", location.lng.toString());
-    }
-    if (address) {
-      formData.append("address", address);
-    }
+    formData.append("city", city);
+    formData.append("district", district);
 
     const res = await createReport(formData);
     setResult(res);
@@ -194,10 +150,10 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
         </button>
 
         <h2 className="mb-1 text-xl font-bold text-zinc-900 dark:text-zinc-50">
-          İhlal Bildir
+          Davarca Hareket 📸
         </h2>
         <p className="mb-5 text-sm text-zinc-500 dark:text-zinc-400">
-          Fotoğrafla, konumu paylaş, farkındalık yarat.
+          Gördüğünü çek, ilini seç, gerisini bize bırak.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -331,40 +287,41 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
             />
           </div>
 
-          {/* Location status */}
-          <div className="flex items-center gap-2 rounded-lg bg-zinc-50 px-3 py-2 dark:bg-zinc-800/50">
-            {locationStatus === "loading" && (
-              <>
-                <svg className="h-4 w-4 animate-spin text-zinc-400" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">Konum alınıyor...</span>
-              </>
-            )}
-            {locationStatus === "success" && (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-emerald-500">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                <span className="truncate text-xs text-emerald-600 dark:text-emerald-400">
-                  {address || "Konum alındı"}
-                </span>
-              </>
-            )}
-            {locationStatus === "error" && (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                <span className="text-xs text-amber-600 dark:text-amber-400">Konum alınamadı (izin gerekli)</span>
-              </>
-            )}
-            {locationStatus === "idle" && (
-              <span className="text-xs text-zinc-400 dark:text-zinc-500">Konum bekleniyor...</span>
-            )}
+          {/* City / District */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="city" className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                İl <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="city"
+                value={city}
+                onChange={(e) => { setCity(e.target.value); setDistrict(""); }}
+                className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-3 text-sm text-zinc-900 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+              >
+                <option value="">İl seç...</option>
+                {CITY_NAMES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="district" className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                İlçe <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="district"
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+                disabled={!city}
+                className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-3 text-sm text-zinc-900 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+              >
+                <option value="">İlçe seç...</option>
+                {districts.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* Info notice */}
@@ -391,7 +348,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
           {/* Submit button */}
           <button
             type="submit"
-            disabled={!file || loading || (result?.success ?? false)}
+            disabled={!file || !category || !city || !district || loading || (result?.success ?? false)}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-red-600/25 transition-all hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
           >
             {loading ? (

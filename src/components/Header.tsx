@@ -46,7 +46,7 @@ export default function Header() {
                 Davar
               </h1>
               <p className="hidden text-xs text-zinc-500 dark:text-zinc-400 sm:block">
-                Kural ihlallerini kayıt altına al
+                Davarca hareketlerin adresi
               </p>
             </div>
           </a>

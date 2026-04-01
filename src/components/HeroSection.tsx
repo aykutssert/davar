@@ -26,12 +26,12 @@ export default function HeroSection() {
           priority
         />
         <h2 className="max-w-2xl text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
-          Kural ihlallerini fotoğrafla.
+          Davarca hareket et.
           <br />
-          <span className="text-red-600">Farkındalık yarat.</span>
+          <span className="text-red-600">Çek, paylaş, fark yarat.</span>
         </h2>
         <p className="mt-4 max-w-lg text-base text-zinc-600 dark:text-zinc-400 sm:text-lg">
-          Kaldırım, engelli yolu ve bisiklet yollarındaki usulsüz parkları kayıt altına al. Anonim, hızlı, etkili.
+          Kaldırıma park eden mi gördün? Engelli yolunu kapatan mı var? Fotoğrafla, ilini seç, gerisini bize bırak. Anonim, hızlı, etkili.
         </p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
           <button
@@ -42,13 +42,13 @@ export default function HeroSection() {
               <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
               <circle cx="12" cy="13" r="3" />
             </svg>
-            Hemen Bildir
+            Davarca Hareket Et
           </button>
           <button
             onClick={handleScrollToFeed}
             className="inline-flex items-center gap-1 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
           >
-            Bildirimlere göz at
+            Haftanın karnesine bak
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="m6 9 6 6 6-6" />
             </svg>

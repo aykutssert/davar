@@ -9,8 +9,8 @@ interface Report {
   image_url: string;
   comment: string | null;
   category: string | null;
-  latitude: number | null;
-  longitude: number | null;
+  city: string | null;
+  district: string | null;
   status: string;
 }
 
@@ -295,8 +295,8 @@ export default function AdminPage() {
               </span>
             )}
             <span>{new Date(editingReport.created_at).toLocaleString("tr-TR")}</span>
-            {editingReport.latitude && editingReport.longitude && (
-              <span>📍 {editingReport.latitude.toFixed(4)}, {editingReport.longitude.toFixed(4)}</span>
+            {editingReport.city && (
+              <span>📍 {editingReport.district ? `${editingReport.district}, ${editingReport.city}` : editingReport.city}</span>
             )}
           </div>
 
@@ -459,9 +459,9 @@ export default function AdminPage() {
                   )}
                   <div className="mb-3 flex flex-wrap gap-2 text-xs text-zinc-400 dark:text-zinc-500">
                     <span>{new Date(report.created_at).toLocaleString("tr-TR")}</span>
-                    {report.latitude && report.longitude && (
+                    {report.city && (
                       <span>
-                        📍 {report.latitude.toFixed(4)}, {report.longitude.toFixed(4)}
+                        📍 {report.district ? `${report.district}, ${report.city}` : report.city}
                       </span>
                     )}
                   </div>
