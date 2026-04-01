@@ -198,6 +198,40 @@ export default function HeatmapSection() {
                 </CircleMarker>
               );
             })}
+
+            {/* District markers - shown when city selected */}
+            {selectedCity && filteredDistricts.map((district, index) => {
+              const cityData = cityStats.find(c => c.city === selectedCity);
+              if (!cityData) return null;
+              
+              // Distribute districts in a circle around city center
+              const angle = (index / filteredDistricts.length) * 2 * Math.PI;
+              const offset = 0.05; // ~5km offset
+              const dLat = cityData.lat + Math.sin(angle) * offset;
+              const dLng = cityData.lng + Math.cos(angle) * offset;
+              
+              return (
+                <CircleMarker
+                  key={`${district.city}-${district.district}`}
+                  center={[dLat, dLng]}
+                  radius={6 + district.count * 2}
+                  fillColor="#dc2626"
+                  fillOpacity={0.6}
+                  stroke={true}
+                  color="#fff"
+                  weight={1}
+                >
+                  <Popup>
+                    <div className="p-1">
+                      <p className="font-semibold text-zinc-900">{district.district}</p>
+                      <p className="text-sm text-zinc-600">
+                        <span className="font-medium text-red-600">{district.count}</span> ihlal
+                      </p>
+                    </div>
+                  </Popup>
+                </CircleMarker>
+              );
+            })}
           </MapContainer>
 
           {/* Legend */}
