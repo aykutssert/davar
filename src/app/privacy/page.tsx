@@ -148,9 +148,8 @@ export default function PrivacyPage() {
                 href="mailto:aykutssert@gmail.com"
                 className="font-medium text-red-600 underline underline-offset-2 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                aykutssert@gmail.com
-              </a>{" "}
-              adresine e-posta gönderebilirsiniz.
+                bizimle iletişime geçin
+              </a>.
             </p>
           </section>
 
@@ -164,9 +163,8 @@ export default function PrivacyPage() {
                 href="mailto:aykutssert@gmail.com"
                 className="font-medium text-red-600 underline underline-offset-2 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                aykutssert@gmail.com
-              </a>{" "}
-              adresiyle iletişime geçebilirsiniz.
+                bizimle iletişime geçebilirsiniz
+              </a>.
             </p>
           </section>
         </div>
