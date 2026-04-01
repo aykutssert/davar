@@ -16,6 +16,12 @@ const DefaultIcon = new Icon({
   shadowSize: [41, 41],
 });
 
+// Türkiye sınırları
+const TURKEY_BOUNDS: [[number, number], [number, number]] = [
+  [35.8, 25.6], // Southwest: En batı/en güney
+  [42.1, 44.8], // Northeast: En doğru/en kuzey
+];
+
 interface CityStats {
   city: string;
   count: number;
@@ -143,6 +149,10 @@ export default function HeatmapSection() {
           <MapContainer
             center={mapCenter}
             zoom={mapZoom}
+            minZoom={6}
+            maxZoom={12}
+            maxBounds={TURKEY_BOUNDS}
+            maxBoundsViscosity={1.0}
             scrollWheelZoom={false}
             style={{ height: "100%", width: "100%" }}
             className="z-0"
