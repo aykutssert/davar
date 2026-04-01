@@ -57,10 +57,23 @@ export default function AdminPage() {
     if (authenticated) fetchReports();
   }, [authenticated, filter, fetchReports]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const [loginError, setLoginError] = useState("");
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length > 0) {
-      setAuthenticated(true);
+    if (password.length === 0) return;
+    setLoginError("");
+    try {
+      const res = await fetch("/api/admin/reports?filter=pending", {
+        headers: { "x-admin-password": password },
+      });
+      if (res.ok) {
+        setAuthenticated(true);
+      } else {
+        setLoginError("Şifre yanlış.");
+      }
+    } catch {
+      setLoginError("Bağlantı hatası.");
     }
   };
 
@@ -249,6 +262,11 @@ export default function AdminPage() {
             className="mb-4 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
             autoFocus
           />
+          {loginError && (
+            <p className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 dark:bg-red-900/20 dark:text-red-400">
+              {loginError}
+            </p>
+          )}
           <button
             type="submit"
             className="w-full rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-red-700"
