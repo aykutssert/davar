@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
+import HeatmapSection from "@/components/HeatmapSection";
 import Feed from "@/components/Feed";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +11,9 @@ export default function Home() {
     <>
       <Header />
       <HeroSection />
+
+      {/* Heatmap */}
+      <HeatmapSection />
 
       <main id="bildirimler" className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         {/* Stats bar */}
