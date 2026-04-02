@@ -33,7 +33,17 @@ export default function HeroSection() {
         <p className="mt-4 max-w-lg text-base text-zinc-600 dark:text-zinc-400 sm:text-lg">
           Kaldırıma park eden mi gördün? Engelli yolunu kapatan mı var? Fotoğrafla, ilini seç, gerisini bize bırak. Anonim, hızlı, etkili.
         </p>
-        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
+        <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 dark:border-emerald-800 dark:bg-emerald-950/30">
+          <p className="flex items-start gap-2 text-sm text-emerald-800 dark:text-emerald-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4"/>
+              <path d="M12 8h.01"/>
+            </svg>
+            <span>Yüklenen fotoğraflardaki plakalar ve yüzler şimdilik yasal sorun teşkil etmemesi açısından blurlanır.</span>
+          </p>
+        </div>
+        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
           <button
             onClick={handleOpenModal}
             className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-red-600/25 transition-all hover:bg-red-700 hover:shadow-red-700/30 active:scale-95"
