@@ -10,23 +10,6 @@ const adminRatelimit = new Ratelimit({
 });
 
 export async function checkAdminRateLimit(request: NextRequest) {
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
-    "127.0.0.1";
-
-  const { success, reset } = await adminRatelimit.limit(ip);
-
-  if (!success) {
-    const retryAfter = Math.ceil((reset - Date.now()) / 1000);
-    return NextResponse.json(
-      { error: "Çok fazla başarısız deneme. Lütfen daha sonra tekrar deneyin." },
-      {
-        status: 429,
-        headers: { "Retry-After": retryAfter.toString() },
-      }
-    );
-  }
-
+  // Admin rate limit devre dışı
   return null;
 }
