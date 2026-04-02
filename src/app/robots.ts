@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin", "/api/"],
       },
     ],
-    sitemap: "https://duba.app/sitemap.xml",
+    sitemap: "https://duba-sand.vercel.app/sitemap.xml",
   };
 }
