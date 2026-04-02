@@ -1,5 +1,4 @@
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { checkAdminRateLimit } from "@/lib/admin-rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { timingSafeEqual } from "crypto";
 
@@ -8,9 +7,6 @@ const VALID_FILTERS = ["pending", "approved", "rejected", "all"];
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 async function checkAuth(request: NextRequest) {
-  const rateLimitError = await checkAdminRateLimit(request);
-  if (rateLimitError) return rateLimitError;
-
   const pw = request.headers.get("x-admin-password") || "";
   try {
     const a = Buffer.from(pw);

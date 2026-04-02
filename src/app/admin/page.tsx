@@ -67,13 +67,16 @@ export default function AdminPage() {
     if (password.length === 0) return;
     setLoginError("");
     try {
-      const res = await fetch("/api/admin/reports?filter=pending", {
-        headers: { "x-admin-password": password },
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
       });
       if (res.ok) {
         setAuthenticated(true);
       } else {
-        setLoginError("Şifre yanlış.");
+        const data = await res.json();
+        setLoginError(data.error || "Şifre yanlış.");
       }
     } catch {
       setLoginError("Bağlantı hatası.");

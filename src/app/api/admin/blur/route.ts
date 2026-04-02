@@ -1,5 +1,4 @@
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { checkAdminRateLimit } from "@/lib/admin-rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { timingSafeEqual } from "crypto";
 
@@ -8,9 +7,7 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export async function POST(request: NextRequest) {
-  const rateLimitError = await checkAdminRateLimit(request);
-  if (rateLimitError) return rateLimitError;
-
+  // Şifre kontrolü
   const pw = request.headers.get("x-admin-password") || "";
   try {
     const a = Buffer.from(pw);
