@@ -12,6 +12,7 @@ interface Report {
   city: string | null;
   district: string | null;
   status: string;
+  location_flag: string | null;
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -320,6 +321,17 @@ export default function AdminPage() {
             )}
           </div>
 
+          {editingReport.location_flag && (
+            <div className="mb-4 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+                <path d="M12 9v4" />
+                <path d="M12 17h.01" />
+              </svg>
+              Şüpheli konum: {editingReport.location_flag}
+            </div>
+          )}
+
           <canvas
             ref={canvasRef}
             className="mb-4 w-full cursor-crosshair rounded-xl border-2 border-zinc-300 dark:border-zinc-700"
@@ -498,6 +510,16 @@ export default function AdminPage() {
                       </span>
                     )}
                   </div>
+                  {report.location_flag && (
+                    <div className="mb-3 flex items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1.5 text-xs font-medium text-amber-800 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+                        <path d="M12 9v4" />
+                        <path d="M12 17h.01" />
+                      </svg>
+                      Şüpheli konum: {report.location_flag}
+                    </div>
+                  )}
                   <div className="flex gap-2">
                     {report.status === "pending" && (
                       <button

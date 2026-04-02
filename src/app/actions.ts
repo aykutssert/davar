@@ -7,6 +7,7 @@ import { Redis } from "@upstash/redis";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import sharp from "sharp";
+import { findNearestCity } from "@/lib/city-coords";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -111,8 +112,49 @@ export async function createReport(formData: FormData): Promise<ActionResult> {
   const baseName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const fileName = `${baseName}.${ext}`;
 
-  // EXIF metadata temizle (plaka, yüz, GPS gibi gizli veriler)
+  // --- Konum doğrulama (EXIF GPS + IP City) ---
   const fileBuffer = Buffer.from(await file.arrayBuffer());
+  const locationFlags: string[] = [];
+
+  // 1. EXIF GPS kontrolü — fotoğraftaki GPS'i oku, il ile karşılaştır, sonra sil
+  try {
+    const metadata = await sharp(fileBuffer).metadata();
+    if (metadata.exif) {
+      const exifParser = await import("exif-reader");
+      const exifData = exifParser.default(metadata.exif);
+      const gps = exifData?.GPSInfo;
+      if (gps?.GPSLatitude && gps?.GPSLongitude) {
+        // DMS array [degrees, minutes, seconds] → decimal
+        const dmsToDecimal = (dms: number[], ref?: string) => {
+          const dec = dms[0] + dms[1] / 60 + (dms[2] || 0) / 3600;
+          return ref === "S" || ref === "W" ? -dec : dec;
+        };
+        const lat = dmsToDecimal(gps.GPSLatitude, gps.GPSLatitudeRef);
+        const lng = dmsToDecimal(gps.GPSLongitude, gps.GPSLongitudeRef);
+        if (lat && lng) {
+          const exifCity = findNearestCity(lat, lng);
+          if (exifCity && exifCity !== city) {
+            locationFlags.push(`GPS: ${exifCity}`);
+          }
+        }
+      }
+    }
+  } catch {
+    // EXIF okunamazsa sessizce devam et
+  }
+
+  // 2. Vercel IP City kontrolü
+  const ipCity = headersList.get("x-vercel-ip-city");
+  if (ipCity) {
+    const decodedIpCity = decodeURIComponent(ipCity);
+    if (decodedIpCity.toLowerCase() !== city.toLowerCase()) {
+      locationFlags.push(`IP: ${decodedIpCity}`);
+    }
+  }
+
+  const locationFlag = locationFlags.length > 0 ? locationFlags.join(", ") : null;
+
+  // EXIF metadata temizle (plaka, yüz, GPS gibi gizli veriler)
   let cleanBuffer: Buffer;
   try {
     cleanBuffer = await sharp(fileBuffer)
@@ -151,6 +193,7 @@ export async function createReport(formData: FormData): Promise<ActionResult> {
     city: sanitize(city),
     district: sanitize(district),
     status: "pending",
+    location_flag: locationFlag,
   });
 
   if (dbError) {

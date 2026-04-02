@@ -13,6 +13,7 @@
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.37.0",
     "browser-image-compression": "^2.0.2",
+    "exif-reader": "^2.0.3",
     "leaflet": "^1.9.4",
     "next": "16.2.2",
     "react": "19.2.4",
