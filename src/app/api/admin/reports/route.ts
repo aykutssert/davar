@@ -97,5 +97,11 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Silme başarısız" }, { status: 500 });
   }
 
+  // Toplam sayacı azalt
+  const { error: statsError } = await supabaseAdmin.rpc("decrement_total_reports");
+  if (statsError) {
+    console.error("Stats decrement error:", statsError);
+  }
+
   return NextResponse.json({ success: true });
 }
